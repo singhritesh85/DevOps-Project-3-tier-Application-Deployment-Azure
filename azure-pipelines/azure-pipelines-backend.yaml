@@ -1,0 +1,71 @@
+trigger:
+- none
+
+resources:
+- repo: self
+
+pool:
+  name: demo
+  demands:
+  - agent.name -equals demo
+
+variables:
+  imagePullSecret: 'backend-auth'
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    workspace:
+      clean: all
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: 'sonar-scanner -Dsonar.projectKey=three-tier-app-backend -Dsonar.projectName=three-tier-app-backend -Dsonar.qualitygate.wait=true -Dsonar.host.url=http://20.102.109.135:9000 -Dsonar.login=squ_9d8f22353cb1b6bf49d855129c81c2d35ec374d7'
+- stage: "TrivyImageScanAndDockerBuildImage"
+  displayName: Trivy Image Scan
+  dependsOn: Build
+  jobs:
+  - job: "TrivyImageScanAndDockerBuildImage"
+    displayName: "TrivyImageScan"
+    steps:
+    - checkout: none
+    - task: CmdLine@2
+      inputs:
+        script: |
+          docker system prune -f --all
+          docker build -t demoimage:1.06 Application-Code/backend
+          docker tag demoimage:1.06 akscontainer24registry1.azurecr.io/backend:$(Build.BuildId)
+          trivy image --exit-code 0 --severity MEDIUM,HIGH akscontainer24registry1.azurecr.io/backend:$(Build.BuildId)
+          #trivy image --exit-code 1 --severity CRITICAL akscontainer24registry1.azurecr.io/backend:$(Build.BuildId)
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'backend'
+        repository: 'backend'
+        command: 'buildAndPush'
+        Dockerfile: '**/Application-Code/backend/Dockerfile'
+- stage: "KubernetesDeployment"    
+  displayName: "Kubernetes Deployment"
+  dependsOn: "TrivyImageScanAndDockerBuildImage"
+  jobs:
+  - deployment: KubernetesDeployment
+    displayName: "Kubernetes Deployment"
+    environment: "dev"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+          - task: HelmDeploy@0
+            inputs:
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Azure DevOps Service Connection'
+              azureResourceGroup: 'aks-rg'
+              kubernetesCluster: 'aks-cluster'
+              namespace: 'three-tier'
+              command: 'upgrade'
+              chartType: 'FilePath'
+              chartPath: '/home/demo/helm-repo-for-ArgoCD-three-tier-app-backend/folo/'
+              releaseName: 'backend'
+              overrideValues: 'imagePullSecrets[0].name=backend-auth,image.repository=akscontainer24registry1.azurecr.io/backend,image.tag=$(Build.BuildId),replicaCount=2,service.type=ClusterIP,service.port=3500'
