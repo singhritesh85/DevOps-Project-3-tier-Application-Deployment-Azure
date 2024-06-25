@@ -44,6 +44,14 @@ The Service Connection is created as shown in the screenshot below.
 <br><br/>
 The three pipelines in Azure DevOps is as shown in the screenshot below.
 ![image](https://github.com/singhritesh85/DevOps-Project-3-tier-Application-Deployment-Azure/assets/56765895/92ac0566-5b4d-4007-9d7a-49b27dbafaba)
+```
+The frontend-auth and backend-auth secrets for kubernetes can be created using the command below
+
+kubectl create secret docker-registry frontend-auth --docker-server=https://akscontainer24registry2.azurecr.io --docker-username=akscontainer24registry2 --docker-password=XXXXXXXXXXXXXXXXXXXXXXXXXXXOJ7eXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXFyh6 -n three-tier
+
+
+kubectl create secret docker-registry backend-auth --docker-server=https://akscontainer24registry1.azurecr.io --docker-username=akscontainer24registry1 --docker-password=XXXXXXXXXXXXXXXXXXXXXXXXXXXX4rHeWXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX1skn -n three-tier
+```
 <br><br/>
 <br><br/>
 <br><br/>
