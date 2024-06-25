@@ -1,0 +1,33 @@
+# kubectl create secret tls ingress-secret --key mykey.key --cert STAR_singhritesh85_com.crt -n three-tier
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dexter-ingress
+  namespace: three-tier
+  annotations:
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: azure-application-gateway
+  tls:
+#  - hosts:
+#    - dexter.singhritesh85.com
+  - secretName: ingress-secret
+  rules:
+  - host: backend.singhritesh85.com
+    http:
+      paths:
+      - path: /api
+        backend:
+          service:
+            name: backend-folo
+            port:
+              number: 3500
+        pathType: Prefix
+      - path: /
+        backend:
+          service:
+            name: frontend-folo
+            port:
+              number: 3000
+        pathType: Prefix
