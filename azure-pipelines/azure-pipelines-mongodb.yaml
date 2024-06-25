@@ -1,0 +1,37 @@
+trigger:
+- none
+
+resources:
+- repo: self
+
+pool:
+  name: demo
+  demands:
+  - agent.name -equals demo
+
+stages:
+- stage: DeployMongoDBPod
+  displayName: DeployMongoDBPod
+  jobs:
+  - deployment: DeployMongoDBPod
+    displayName: DeployMongoDBPod
+    environment: "dev"
+    workspace:
+      clean: all
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: none
+          - task: HelmDeploy@0
+            inputs:
+              connectionType: 'Azure Resource Manager'
+              azureSubscription: 'Azure DevOps Service Connection'
+              azureResourceGroup: 'aks-rg'
+              kubernetesCluster: 'aks-cluster'
+              namespace: 'three-tier'
+              command: 'upgrade'
+              chartType: 'FilePath'
+              chartPath: '/home/demo/helm-repo-for-ArgoCD-three-tier-app-database/folo/'
+              releaseName: 'mongodb'
+              overrideValues: 'image.repository=mongo,image.tag=4.4.6,replicaCount=1,service.type=ClusterIP,service.port=27017'
