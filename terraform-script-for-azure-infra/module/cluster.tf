@@ -235,48 +235,6 @@ resource "azurerm_application_gateway" "appgtw" {
   depends_on = [azurerm_subnet.appgtw_subnet]
 }
 
-### Create Public IP and Virtual Network Gateway ###
-
-resource "azurerm_public_ip" "vnetgtw_ip" {
-  name                = "${var.prefix}-VNGTW-ip"
-  location            = azurerm_resource_group.aks_rg.location
-  resource_group_name = azurerm_resource_group.aks_rg.name
-  allocation_method   = var.static_dynamic[0]
- 
-  sku = "Standard"   ### Basic, For Availability Zone to be Enabled the SKU of Public IP must be Standard
-#  zones = var.availability_zone
-
-  tags = {
-    environment = var.env
-  } 
-
-}
-
-resource "azurerm_virtual_network_gateway" "vnetgtw" {
-  name                = "${var.prefix}-VNGTW"
-  location            = azurerm_resource_group.aks_rg.location
-  resource_group_name = azurerm_resource_group.aks_rg.name
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-
-  active_active = false
-  enable_bgp    = false
-  sku           = "VpnGw2"
-  generation = "Generation2"
-
-  ip_configuration {
-    public_ip_address_id          = azurerm_public_ip.vnetgtw_ip.id
-    private_ip_address_allocation = var.static_dynamic[1]
-    subnet_id                     = azurerm_subnet.vnet_gtwsubnet.id
-  }
-
-  tags = {
-    environment = var.env
-  }
-
-}
-
 # Create Azure Kubernetes Cluster
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                = "${var.prefix}-cluster"
