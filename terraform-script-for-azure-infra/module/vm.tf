@@ -77,8 +77,6 @@ resource "azurerm_network_interface_security_group_association" "nsg_nic_sonarqu
   network_interface_id      = azurerm_network_interface.vnet_interface_sonarqube.id
   network_security_group_id = azurerm_network_security_group.azure_nsg_sonarqube.id
 
-  depends_on = [azurerm_virtual_network_gateway.vnetgtw]
-
 }
 
 ######################################################## Create Azure VM for SonarQube ##########################################################
