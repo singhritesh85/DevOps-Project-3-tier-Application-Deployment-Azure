@@ -205,8 +205,6 @@ resource "azurerm_network_interface_security_group_association" "nsg_nic" {
   network_interface_id      = azurerm_network_interface.vnet_interface_devopsagent.id
   network_security_group_id = azurerm_network_security_group.azure_nsg_devopsagent.id
 
-  depends_on = [azurerm_virtual_network_gateway.vnetgtw]
-
 }
 
 ######################################################## Create Azure VM for Azure DevOps Agent ##########################################################
