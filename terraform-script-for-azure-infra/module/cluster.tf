@@ -58,14 +58,6 @@ resource "azurerm_subnet" "appgtw_subnet" {
   depends_on = [azurerm_virtual_network.aks_vnet]
 }
 
-### Create Gateway Subnet
-resource "azurerm_subnet" "vnet_gtwsubnet" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurerm_resource_group.aks_rg.name
-  virtual_network_name = azurerm_virtual_network.aks_vnet.name
-  address_prefixes     = ["10.226.0.0/16"]
-}
-
 # Create Subnet for PostgreSQL Flexible servers
 resource "azurerm_subnet" "postgresql_flexible_server_subnet" {
   name                 = "${var.prefix}-postgresql-flexible-server-subnet"
