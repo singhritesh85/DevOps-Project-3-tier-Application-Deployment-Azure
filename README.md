@@ -1,5 +1,5 @@
 # DevOps-Project-3-tier-Application-Deployment-Azure
-![image](https://github.com/singhritesh85/DevOps-Project-3-tier-Application-Deployment-Azure/assets/56765895/4bce6d01-b801-46ea-b7a4-fdc514927e6c)
+![image](https://github.com/singhritesh85/DevOps-Project-3-tier-Application-Deployment-Azure/assets/56765895/e10eabf1-9fdb-428a-8870-9c48758a0312)
 <br><br/>
 For your reference the Source Code for this project is present in the GitHub Repository https://github.com/singhritesh85/TWSThreeTierAppChallenge.git inside the directory Application-Code. However for the current project I have used Azure Repos into which the source code is present. as shown in the screenshot below.
 ![image](https://github.com/singhritesh85/DevOps-Project-3-tier-Application-Deployment-Azure/assets/56765895/99bae13f-c198-410b-ac20-62755a1e1f1c)
